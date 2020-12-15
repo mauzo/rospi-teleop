@@ -36,6 +36,9 @@ class PygameInterface:
         actions = []
 
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                actions.append("quit")
+
             if event.type == pygame.KEYDOWN:
                 if event.key in self.keydown:
                     actions.append(self.keydown[event.key])
