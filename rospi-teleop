@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /opt/ros/melodic/setup.sh
+
+python2 -m rospi.teleop

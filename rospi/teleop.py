@@ -1,5 +1,3 @@
-#!/usr/bin/env python3.7
-
 import curses
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
@@ -46,7 +44,7 @@ class CursesInterface:
         else:
             return []
 
-    def print (self, msg):
+    def puts (self, msg):
         self.win.addstr(0, self.y, msg)
         self.y = self.y + 1
 
@@ -100,7 +98,7 @@ class PygameInterface:
 
         return actions
 
-    def print (self, msg):
+    def puts (self, msg):
         print(msg)
 
     def update (self):
