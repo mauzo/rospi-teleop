@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. @ROS_DIR@/setup.sh
+
+@PYTHON_CMD@ -m rospi.teleop

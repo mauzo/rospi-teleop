@@ -1,0 +1,25 @@
+#!/bin/sh
+
+die () {
+    echo
+    echo "$*" >&2
+    exit 1
+}
+
+echo -n "Locating ROS..."
+ros_dir="$(echo /opt/ros/*)"
+[ -e "$ros_dir/setup.sh" ]      || die "Can't find ROS!"
+echo " $ros_dir"
+
+. "$ros_dir/setup.sh"
+
+echo -n "Choosing a Python..."
+python_cmd="python$ROS_PYTHON_VERSION"
+$python_cmd -h >/dev/null       || die "Can't find a suitable python!"
+$python_cmd -c 'import rospy'   || die "Can't find a suitable python!"
+echo " $python_cmd"
+
+cat >config.mk <<CONFIG
+ROS_DIR=$ros_dir
+PYTHON_CMD=$python_cmd
+CONFIG
