@@ -24,10 +24,26 @@ class PygameInterface:
         pygame.K_d:     "stop",
     }
 
+    def __init__ (self):
+        self.win    = None
+        self.joy    = None
+
     def setup (self):
+        self.setup_display()
+        self.setup_joystick()
+
+    def setup_display (self):
         pygame.display.init()
-        win = pygame.display.set_mode((100, 100))
+        self.win = pygame.display.set_mode((100, 100))
         pygame.key.set_repeat(0)
+
+    def setup_joystick (self):
+        pygame.joystick.init()
+        if pygame.joystick.get_count() == 0:
+            return
+
+        self.joy    = pygame.joystick.Joystick(0)
+        self.joy.init()
 
     def quit (self):
         pygame.quit()
@@ -46,6 +62,18 @@ class PygameInterface:
             if event.type == pygame.KEYUP:
                 if event.key in self.keyup:
                     actions.append(self.keyup[event.key])
+
+            if event.type == pygame.JOYAXISMOTION:
+                if event.axis == 0:
+                    if event.value > 0.1:
+                        actions.append("right")
+                    elif event.value < -0.1:
+                        actions.append("left")
+                elif event.axis == 1:
+                    if event.value > 0.1:
+                        actions.append("backward")
+                    elif event.value < -0.1:
+                        actions.append("forward")
 
         return actions
 
