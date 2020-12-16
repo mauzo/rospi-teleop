@@ -1,0 +1,21 @@
+This is code to remote-control a buggy using ROS.
+
+You need to run
+
+    ./configure
+    make
+
+before it can be used. After that run
+
+    ./rospi-teleop
+
+It currently doesn't install in a sensible way and can only be run from
+this directory. This needs fixing...
+
+The keyboard controls are WASD to move the buggy, arrow keys to change the
+speed, space to stop and escape to quit. Clicking on the window will grab
+the mouse; moving the mouse will then control the buggy. Click again to
+release the mouse. If an XBox controller is plugged in when the program
+starts then the LH analogue stick will control the buggy.
+
+There is also a curses version, but it is currently broken.
