@@ -60,11 +60,11 @@ class Digital (Control):
     def apply (self, point):
         point.value     = self.value * point.step
 
-class AbsStep (Control):
+class AbsAdjust (Control):
     def apply (self, point):
         point.step      = self.value * point.max
 
-class RelStep (Control):
+class RelAdjust (Control):
     def apply (self, point):
         st              = point.step + self.value * point.adj
         point.step      = clamp(st, 0, point.max)
