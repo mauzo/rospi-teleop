@@ -1,6 +1,7 @@
 from    __future__      import division
 import  pygame
-from    rospi.teleop    import Action, ControlAction
+
+from    .   import actions as act
 
 # Grr python2 rubbish
 __metaclass__ = type
@@ -8,11 +9,11 @@ __metaclass__ = type
 DEADZONE    = 0.05
 
 class Axis:
-    __slots__   = ["value", "action", "scale", "dead"]
+    __slots__   = ["value", "axis", "scale", "dead"]
 
-    def __init__ (self, action, scale=1.0, dead=0.1):
+    def __init__ (self, axis, scale=1.0, dead=0.1):
         self.value  = 0.0
-        self.action = action
+        self.axis   = axis
         self.scale  = scale / (1.0 - dead)
         self.dead   = dead
 
@@ -30,10 +31,7 @@ class Axis:
             return []
         self.value  = value
 
-        return [ControlAction(
-            type=self.action,
-            value=value, 
-            absolute=True)]
+        return [act.Analogue(axis=self.axis, value=value)]
 
 # Colours
 BLACK   = (0,   0,   0)
@@ -47,33 +45,33 @@ YELLOW  = (240, 240, 0)
 # window just to accept events.
 class PygameInterface:
     keydown = {
-        pygame.K_ESCAPE:        Action(type="quit"),
-        pygame.K_SPACE:         Action(type="stop"),
-        pygame.K_w:             ControlAction(type="speed", value=1),
-        pygame.K_s:             ControlAction(type="speed", value=-1),
-        pygame.K_a:             ControlAction(type="turn", value=-1),
-        pygame.K_d:             ControlAction(type="turn", value=1),
-        pygame.K_UP:            ControlAction(type="adj-speed", value=1),
-        pygame.K_DOWN:          ControlAction(type="adj-speed", value=-1),
-        pygame.K_RIGHT:         ControlAction(type="adj-turn", value=1),
-        pygame.K_LEFT:          ControlAction(type="adj-turn", value=-1),
+        pygame.K_ESCAPE:        act.Quit(),
+        pygame.K_SPACE:         act.Stop(),
+#        pygame.K_w:             ,
+#        pygame.K_s:             ControlAction(type="speed", value=-1),
+#        pygame.K_a:             ControlAction(type="turn", value=-1),
+#        pygame.K_d:             ControlAction(type="turn", value=1),
+#        pygame.K_UP:            ControlAction(type="adj-speed", value=1),
+#        pygame.K_DOWN:          ControlAction(type="adj-speed", value=-1),
+#        pygame.K_RIGHT:         ControlAction(type="adj-turn", value=1),
+#        pygame.K_LEFT:          ControlAction(type="adj-turn", value=-1),
     }
 
     keyup = {
-        pygame.K_w:     ControlAction(type="speed", value=-1),
-        pygame.K_s:     ControlAction(type="speed", value=1),
-        pygame.K_a:     ControlAction(type="turn", value=1),
-        pygame.K_d:     ControlAction(type="turn", value=-1)
+#        pygame.K_w:     ControlAction(type="speed", value=-1),
+#        pygame.K_s:     ControlAction(type="speed", value=1),
+#        pygame.K_a:     ControlAction(type="turn", value=1),
+#        pygame.K_d:     ControlAction(type="turn", value=-1)
     }
 
     joy_axis = {
-        0:      Axis(action="turn", scale=1.0),
-        1:      Axis(action="speed", scale=-1.0),
+        0:      Axis(axis="turn", scale=1.0),
+        1:      Axis(axis="speed", scale=-1.0),
     }
 
     mouse_axis = (
-        Axis(action="turn", scale=1.0, dead=0.3),
-        Axis(action="speed", scale=-1.0, dead=0.3),
+        Axis(axis="turn", scale=1.0, dead=0.3),
+        Axis(axis="speed", scale=-1.0, dead=0.3),
     )
 
     winsize = (400, 300)
