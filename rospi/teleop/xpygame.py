@@ -1,3 +1,4 @@
+from    __future__      import division
 import  pygame
 from    rospi.teleop    import Action, ControlAction
 
@@ -6,7 +7,7 @@ __metaclass__ = type
 
 DEADZONE    = 0.05
 
-class JoyAxis:
+class Axis:
     __slots__   = ["value", "action", "scale"]
 
     def __init__ (self, action, scale=1.0):
@@ -61,14 +62,21 @@ class PygameInterface:
     }
 
     joy_axis = {
-        0:      JoyAxis(action="turn", scale=1.0),
-        1:      JoyAxis(action="speed", scale=-1.0),
+        0:      Axis(action="turn", scale=1.0),
+        1:      Axis(action="speed", scale=-1.0),
     }
+
+    mouse_axis = (
+        Axis(action="turn", scale=1.0),
+        Axis(action="speed", scale=-1.0),
+    )
+
+    winsize = (400, 300)
 
     def __init__ (self):
         self.win        = None
         self.joy        = None
-        self.joy_active = False
+        self.mouse      = False
 
     def setup (self):
         self.setup_display()
@@ -76,7 +84,7 @@ class PygameInterface:
 
     def setup_display (self):
         pygame.display.init()
-        self.win = pygame.display.set_mode((400, 300))
+        self.win = pygame.display.set_mode(self.winsize)
         pygame.key.set_repeat(0)
 
     def setup_joystick (self):
@@ -96,6 +104,26 @@ class PygameInterface:
         axis    = self.joy_axis[event.axis]
         value   = event.value
 
+    def handle_mouse_click (self):
+        self.mouse = not self.mouse
+        pygame.event.set_grab(self.mouse)
+        pygame.mouse.set_visible(not self.mouse)
+
+        if self.mouse:
+            ws  = self.winsize
+            pygame.mouse.set_pos(ws[0]/2, ws[1]/2)
+
+    def handle_mouse_motion (self, pos):
+        ws  = self.winsize
+        rv  = []
+
+        for i in 0, 1:
+            sc  = ws[i]/2
+            v   = (pos[i] - sc)/sc
+            a   = self.mouse_axis[i].handle_value(v)
+            rv.extend(a)
+
+        return rv
 
     def get_actions (self):
         actions = []
@@ -117,6 +145,14 @@ class PygameInterface:
                     actions.extend(
                         self.joy_axis[event.axis].
                             handle_value(event.value))
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.handle_mouse_click()
+
+            if event.type == pygame.MOUSEMOTION:
+                if self.mouse:
+                    actions.extend(
+                        self.handle_mouse_motion(event.pos))
 
         return actions
 
