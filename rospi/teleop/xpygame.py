@@ -8,18 +8,23 @@ __metaclass__ = type
 DEADZONE    = 0.05
 
 class Axis:
-    __slots__   = ["value", "action", "scale"]
+    __slots__   = ["value", "action", "scale", "dead"]
 
-    def __init__ (self, action, scale=1.0):
+    def __init__ (self, action, scale=1.0, dead=0.1):
         self.value  = 0.0
         self.action = action
-        self.scale  = scale
+        self.scale  = scale / (1.0 - dead)
+        self.dead   = dead
 
     def handle_value (self, value):
-        if value < DEADZONE and value > -DEADZONE:
+        if value < self.dead and value > -self.dead:
             value   = 0.0
         else:
-            value   = round(value * self.scale, 4)
+            if value > 0:
+                value   = value - self.dead
+            else:
+                value   = value + self.dead
+            value   = round(value * self.scale, 3)
 
         if value == self.value:
             return []
@@ -67,8 +72,8 @@ class PygameInterface:
     }
 
     mouse_axis = (
-        Axis(action="turn", scale=1.0),
-        Axis(action="speed", scale=-1.0),
+        Axis(action="turn", scale=1.0, dead=0.3),
+        Axis(action="speed", scale=-1.0, dead=0.3),
     )
 
     winsize = (400, 300)
