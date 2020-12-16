@@ -63,6 +63,13 @@ class ControlPoint:
             s           = self.step + control.value * self.adj
             self.step = clamp(s, 0, self.max)
 
+    # Return a scaled value
+    def scale (self, sc):
+        return (self.value / self.max) * sc
+
+    def scale_step (self, sc):
+        return (self.step / self.max) * sc
+
 class TwistController:
     __slots__ = ["speed", "turn"]
 
@@ -136,6 +143,8 @@ def run (win):
                     running = False
                 else:
                     state.handle_action(action)
+
+            win.draw(state)
 
             win.update()
             pub.publish(state.to_twist())

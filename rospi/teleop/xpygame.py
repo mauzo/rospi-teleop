@@ -29,6 +29,13 @@ class JoyAxis:
             value=value, 
             absolute=True)]
 
+# Colours
+BLACK   = (0,   0,   0)
+WHITE   = (255, 255, 255)
+GRAY    = (80,  80,  80)
+RED     = (240, 0,   0)
+YELLOW  = (240, 240, 0)
+
 # This implements the pygame interface. This can handle key-up events,
 # so the motors stop as soon as you release the key. It create a tiny
 # window just to accept events.
@@ -69,7 +76,7 @@ class PygameInterface:
 
     def setup_display (self):
         pygame.display.init()
-        self.win = pygame.display.set_mode((100, 100))
+        self.win = pygame.display.set_mode((400, 300))
         pygame.key.set_repeat(0)
 
     def setup_joystick (self):
@@ -115,6 +122,33 @@ class PygameInterface:
 
     def puts (self, msg):
         print(msg)
+
+    def draw (self, state):
+        w   = self.win
+        d   = pygame.draw
+        sp  = state.speed.scale(100)
+        sps = state.speed.scale_step(100)
+        tr  = state.turn.scale(100)
+        trs = state.turn.scale_step(100)
+
+        w.fill(BLACK)
+
+        d.rect(w, GRAY, [150-trs, 125, 2*trs, 50], 0)
+        if tr > 0:
+            d.rect(w, RED, [150, 125, tr, 50], 0)
+        elif tr < 0:
+            d.rect(w, RED, [150+tr, 125, -tr, 50], 0)
+        d.rect(w, WHITE, [50, 125, 200, 50], 2)
+        d.line(w, WHITE, [150, 125], [150, 175], 2)
+
+        d.rect(w, GRAY, [300, 150-sps, 50, 2*sps], 0)
+        if sp > 0:
+            d.rect(w, RED, [300, 150-sp, 50, sp], 0)
+        elif sp < 0:
+            d.rect(w, RED, [300, 150, 50, -sp], 0)
+        d.rect(w, WHITE, [300, 50, 50, 200], 2)
+        d.line(w, WHITE, [300, 150], [350, 150], 2)
+
 
     def update (self):
         pygame.display.update()
